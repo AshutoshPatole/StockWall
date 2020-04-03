@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "726596073502",
+    "firebase_url": "https://hd-wallpaper-for-free.firebaseio.com",
+    "project_id": "hd-wallpaper-for-free",
+    "storage_bucket": "hd-wallpaper-for-free.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:726596073502:android:39d29a670ae9abb30cd60f",
+        "android_client_info": {
+          "package_name": "com.bitsandbytes.stockwall"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "726596073502-qnuv41ooiqd8eh78bo23uo8en72ji03e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGU6X_8r_hojnPoijKSl5R6U6BmZgipkk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "726596073502-qnuv41ooiqd8eh78bo23uo8en72ji03e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
