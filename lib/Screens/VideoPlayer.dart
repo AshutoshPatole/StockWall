@@ -36,13 +36,6 @@ class _VideoState extends State<Video> with SingleTickerProviderStateMixin {
   }
 
   @override
-  void deactivate() {
-    _playerController.setVolume(0.0);
-    _playerController.removeListener(listener);
-    super.deactivate();
-  }
-
-  @override
   void dispose() {
     _playerController.dispose();
     _animationController.dispose();
