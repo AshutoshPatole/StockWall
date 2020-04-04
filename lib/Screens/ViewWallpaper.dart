@@ -218,12 +218,14 @@ class _ViewWallpaperState extends State<ViewWallpaper>
                     GestureDetector(
                       onTap: () {
                         _setWallpaper();
-                        _scaffoldKey.currentState.showSnackBar(SnackBar(
-                          content: Text("Wallpaper Set Successfully"),
-                          duration: Duration(milliseconds: 1500),
-                          backgroundColor: Colors.lightBlue,
-                          elevation: 1,
-                        ));
+                        _scaffoldKey.currentState.showSnackBar(
+                          SnackBar(
+                            content: Text("Wallpaper Set Successfully !"),
+                            duration: Duration(milliseconds: 1500),
+                            backgroundColor: Colors.lightBlue,
+                            elevation: 1,
+                          ),
+                        );
                       },
                       child: Container(
                         height: 45,

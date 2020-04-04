@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stockwall/Screens/HomePage.dart';
+
 void main() => runApp(StartPage());
 
 class StartPage extends StatelessWidget {
