@@ -14,7 +14,8 @@ class _HomePageState extends State<HomePage>
   int currentCategory = 0;
   Stream categories, video;
   final Firestore database = Firestore.instance;
-  String url = "";
+  String url = "", thumbnailVideoURL = "";
+  String thumb = "";
   String whichIsSelected = "Image";
 
   @override
@@ -79,7 +80,10 @@ class _HomePageState extends State<HomePage>
 
   _categoryPage(Map data, bool active) {
     final double top1 = active ? 100 : 200;
-
+    String imageID = data['id'];
+    String videoNumber = data['number'];
+    String videoDate = data['date'];
+    String videoTitle = data['title'];
     return GestureDetector(
       onTap: () {
         url = data['image'];
@@ -141,7 +145,7 @@ class _HomePageState extends State<HomePage>
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      data['id'],
+                      imageID,
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 34,
@@ -156,6 +160,41 @@ class _HomePageState extends State<HomePage>
                   decoration: BoxDecoration(
                     color: Colors.grey[600],
                     borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              videoNumber ?? " Loading..",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            Text(
+                              videoDate ?? " Loading..",
+                              style: TextStyle(color: Colors.white),
+                            )
+                          ],
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              child: Text(
+                                videoTitle ?? " Loading..",
+                                style: TextStyle(
+                                    color: Colors.white70,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 28),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),

@@ -61,24 +61,20 @@ class _VideoState extends State<Video> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[420],
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          AspectRatio(
-            aspectRatio: 1,
-            child: (_playerController != null)
-                ? VideoPlayer(_playerController)
-                : Container(),
-          ),
-          SizedBox(
-            height: 40,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              FloatingActionButton(
+        backgroundColor: Colors.grey[420],
+        body: Stack(
+          children: <Widget>[
+            Container(
+              height: MediaQuery.of(context).size.height,
+              child: (_playerController != null)
+                  ? VideoPlayer(_playerController)
+                  : Container(),
+            ),
+            Positioned(
+              top: MediaQuery.of(context).size.height * 0.85,
+              left: MediaQuery.of(context).size.width * 0.20,
+              right: MediaQuery.of(context).size.width * 0.20,
+              child: FloatingActionButton(
                 child: AnimatedIcon(
                   progress: _animationController,
                   icon: AnimatedIcons.play_pause,
@@ -96,35 +92,36 @@ class _VideoState extends State<Video> with SingleTickerProviderStateMixin {
                       : _playerController.pause();
                 },
               ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              "Credits",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: <Widget>[
-                CircleAvatar(
-                  child: Image.network(source),
-                  radius: 30,
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                Text(
-                  "-  " + credits,
-                  style: TextStyle(fontSize: 20),
-                )
-              ],
+            Positioned(
+              top: MediaQuery.of(context).size.height * 0.05,
+              left: MediaQuery.of(context).size.width * 0.5,
+              child: Text(
+                "Credits :",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              ),
             ),
-          )
-        ],
-      ),
-    );
+            Positioned(
+              top: MediaQuery.of(context).size.height * 0.05,
+              left: MediaQuery.of(context).size.width * 0.7,
+              child: Row(
+                children: <Widget>[
+                  CircleAvatar(
+                    child: Image.network(source),
+                    radius: 10,
+                    backgroundColor: Colors.transparent,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    credits,
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  )
+                ],
+              ),
+            )
+          ],
+        ));
   }
 }
