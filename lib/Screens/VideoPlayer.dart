@@ -16,6 +16,7 @@ class _VideoState extends State<Video> with SingleTickerProviderStateMixin {
   String url, credits, source;
   AnimationController _animationController;
   bool isPlaying = false;
+  bool isReset = false;
 
   _VideoState(this.url, this.credits, this.source);
 
@@ -27,7 +28,6 @@ class _VideoState extends State<Video> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _getVideo();
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
     listener = () {
@@ -42,39 +42,43 @@ class _VideoState extends State<Video> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  Stream _getVideo() {
-    Query query = database.collection("Videos");
-    video =
-        query.snapshots().map((list) => list.documents.map((doc) => doc.data));
-    return video;
-  }
-
   void createVideo() {
     if (_playerController == null) {
       _playerController = VideoPlayerController.network(url)
         ..addListener(listener)
         ..setVolume(1.0)
-        ..initialize();
+        ..initialize()
+        ..play();
     }
+  }
+
+  void playPause() {
+    isPlaying ? _animationController.forward() : _animationController.reverse();
+    createVideo();
+    _playerController.setVolume(1.0);
+    isPlaying ? _playerController.play() : _playerController.pause();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey[420],
-        body: Stack(
-          children: <Widget>[
-            Container(
-              height: MediaQuery.of(context).size.height,
-              child: (_playerController != null)
-                  ? VideoPlayer(_playerController)
-                  : Container(),
-            ),
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.85,
-              left: MediaQuery.of(context).size.width * 0.20,
-              right: MediaQuery.of(context).size.width * 0.20,
-              child: FloatingActionButton(
+      backgroundColor: Colors.grey[420],
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            height: MediaQuery.of(context).size.height * 0.6,
+            child: (_playerController != null)
+                ? VideoPlayer(_playerController)
+                : Container(),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.1,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              FloatingActionButton(
                 child: AnimatedIcon(
                   progress: _animationController,
                   icon: AnimatedIcons.play_pause,
@@ -83,45 +87,42 @@ class _VideoState extends State<Video> with SingleTickerProviderStateMixin {
                   setState(() {
                     isPlaying = !isPlaying;
                   });
-                  isPlaying
-                      ? _animationController.forward()
-                      : _animationController.reverse();
-                  createVideo();
-                  isPlaying
-                      ? _playerController.play()
-                      : _playerController.pause();
+                  playPause();
                 },
               ),
+            ],
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.06,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: <Widget>[
+                Text(
+                  "Credits :",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.1,
+                ),
+                CircleAvatar(
+                  child: Image.network(source),
+                  radius: 10,
+                  backgroundColor: Colors.transparent,
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  credits,
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                )
+              ],
             ),
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.05,
-              left: MediaQuery.of(context).size.width * 0.5,
-              child: Text(
-                "Credits :",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              ),
-            ),
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.05,
-              left: MediaQuery.of(context).size.width * 0.7,
-              child: Row(
-                children: <Widget>[
-                  CircleAvatar(
-                    child: Image.network(source),
-                    radius: 10,
-                    backgroundColor: Colors.transparent,
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Text(
-                    credits,
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  )
-                ],
-              ),
-            )
-          ],
-        ));
+          )
+        ],
+      ),
+    );
   }
 }

@@ -11,11 +11,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   PageController _pageController = new PageController(viewportFraction: 0.85);
-  int currentCategory = 0;
+  int currentCategory = 0, animateToPageIndex, maximumAnimateToPageIndex;
+  bool maximumPageReached = false;
   Stream categories, video;
   final Firestore database = Firestore.instance;
-  String url = "", thumbnailVideoURL = "";
-  String thumb = "";
+  String url = "";
   String whichIsSelected = "Image";
 
   @override
@@ -57,6 +57,7 @@ class _HomePageState extends State<HomePage>
           if (snapshot.hasData) {
             List categoriesList;
             categoriesList = snapshot.data.toList();
+            maximumAnimateToPageIndex = categoriesList.length;
             return PageView.builder(
               controller: _pageController,
               itemCount: categoriesList.length + 1,
@@ -65,6 +66,7 @@ class _HomePageState extends State<HomePage>
                 if (index == 0) {
                   return _buildFirstPage();
                 } else if (categoriesList.length >= index) {
+                  animateToPageIndex = index;
                   bool active = index == currentCategory;
                   return _categoryPage(categoriesList[index - 1], active);
                 }
@@ -131,28 +133,73 @@ class _HomePageState extends State<HomePage>
           ],
         ),
         child: whichIsSelected == "Image"
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    image: DecorationImage(
-                        image: NetworkImage(
-                          data['image'],
-                        ),
-                        fit: BoxFit.cover),
-                  ),
-                  child: Padding(
+            ? Stack(
+                children: <Widget>[
+                  Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      imageID,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 34,
-                          color: Colors.white),
+                    child: Container(
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.0),
+                        image: DecorationImage(
+                            image: NetworkImage(
+                              data['image'],
+                            ),
+                            fit: BoxFit.cover),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          imageID,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 34,
+                              color: Colors.white),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  Positioned(
+                    bottom: 10,
+                    left: 10,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        size: 40,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        maximumPageReached = false;
+                        _pageController.animateToPage(0,
+                            duration: Duration(milliseconds: 1800),
+                            curve: Curves.easeIn);
+                      },
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 10,
+                    right: 10,
+                    child: IconButton(
+                      icon: Icon(
+                        maximumPageReached ? Icons.clear : Icons.arrow_forward,
+                        size: 40,
+                        color: maximumPageReached ? Colors.red : Colors.white,
+                      ),
+                      onPressed: () {
+                        if (animateToPageIndex + 4 <=
+                            maximumAnimateToPageIndex) {
+                          maximumPageReached = false;
+                          _pageController.animateToPage(animateToPageIndex + 4,
+                              duration: Duration(milliseconds: 1800),
+                              curve: Curves.easeIn);
+                        } else {
+                          maximumPageReached = true;
+                        }
+                      },
+                    ),
+                  )
+                ],
               )
             : Padding(
                 padding: const EdgeInsets.all(8.0),
